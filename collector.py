@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import koreanize_matplotlib # 이 한 줄만 추가하면 됩니다!
 from datetime import datetime
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
