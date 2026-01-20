@@ -1,16 +1,43 @@
-- name: Save changes
+name: Daily YouTube Analysis
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 매일 오전 9시(한국 시간) 실행
+  workflow_dispatch: # 수동 실행 버튼 활성화
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run analysis
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python collector.py
+
+      - name: Save changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-          # 1. 변경된 모든 파일을 먼저 추가합니다.
+          # 변경된 모든 파일 추가
           git add -A
           
-          # 2. 먼저 저장을 해서 인덱스를 깨끗하게 비웁니다. (변경사항 없으면 통과)
-          git commit -m "Auto-update: Daily Stats [$(date +'%Y-%m-%d')]" || { echo "No changes to commit"; exit 0; }
+          # 먼저 저장을 해서 작업 공간을 비웁니다
+          git commit -m "Auto-update: Daily Stats 2026-01-20" || echo "No changes to commit"
           
-          # 3. 이제 깨끗한 상태에서 웹의 변경사항을 가져와 합칩니다.
+          # 웹의 변경사항을 가져와 합칩니다
           git pull origin main --rebase
           
-          # 4. 최종적으로 서버에 올립니다.
+          # 최종 서버 전송
           git push origin main
