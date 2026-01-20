@@ -29,6 +29,8 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add historical_performance.csv performance_report.png
+          git add historical_performance.csv performance_report.png youtube_results.csv
+          # 로봇이 저장하기 전에 웹사이트의 변경사항을 먼저 가져오도록 설정
+          git pull --rebase origin main 
           git commit -m "Auto-update: Daily Stats [$(date +'%Y-%m-%d')]" || echo "No changes"
           git push
