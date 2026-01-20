@@ -2,8 +2,8 @@ name: Daily YouTube Analysis
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 매일 오전 9시(한국 시간) 실행
-  workflow_dispatch: # 수동 실행 버튼 활성화
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,21 +23,15 @@ jobs:
       - name: Run analysis
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python collector.py
 
       - name: Save changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          # 변경된 모든 파일 추가
           git add -A
-          
-          # 먼저 저장을 해서 작업 공간을 비웁니다
-          git commit -m "Auto-update: Daily Stats 2026-01-20" || echo "No changes to commit"
-          
-          # 웹의 변경사항을 가져와 합칩니다
+          git commit -m "Final: Telegram system integrated" || echo "No changes"
           git pull origin main --rebase
-          
-          # 최종 서버 전송
           git push origin main
